@@ -10,9 +10,41 @@ class CategoryType(DjangoObjectType):
         model = Category
 
 
+class MutateCategory(graphene.Mutation):
+    class Arguments:
+        name = graphene.String()
+
+    category = graphene.Field(CategoryType)
+
+    def mutate(self, info, name):
+        category = CategoryType(name=name)
+        return MutateCategory(category=category)
+
+
+class CategoryInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+
+
+class CreateCategory(graphene.Mutation):
+    class Arguments:
+        category_data = CategoryInput(required=True)
+
+    category = graphene.Field(CategoryType)
+
+    @staticmethod
+    def mutate(root, info, category_data=None):
+        category = Category.objects.create(name=category_data.name)
+        return CreateCategory(category=category)
+
+
 class IngredientType(DjangoObjectType):
     class Meta:
         model = Ingredient
+
+
+class Mutations(object):
+    mutate_category = MutateCategory.Field()
+    create_category = CreateCategory.Field()
 
 
 class Query(object):
