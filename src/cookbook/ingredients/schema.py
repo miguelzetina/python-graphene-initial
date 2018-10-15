@@ -1,5 +1,7 @@
 import graphene
 
+from graphene import relay
+
 from graphene_django.types import DjangoObjectType
 
 from cookbook.ingredients.models import Category, Ingredient
@@ -8,6 +10,9 @@ from cookbook.ingredients.models import Category, Ingredient
 class CategoryType(DjangoObjectType):
     class Meta:
         model = Category
+        interfaces = (relay.Node, )
+
+    name = graphene.String(description="The name of Category.")
 
 
 class MutateCategory(graphene.Mutation):
